@@ -1,12 +1,12 @@
 # UNIX Fourth Edition (1973) - Reconstruction & Installation
 
-This repository provides a step-by-step guide and the necessary SIMH configuration to install and run the recently recovered "Utah" UNIX V4 tape (December 2025).
+This repository provides a step-by-step guide and **ready-to-use SIMH configuration files** to install and run the recently recovered “Utah” UNIX V4 tape (December 2025).
 
-### A Milestone in Computer Archeology
+### A Milestone in Computer Archaeology
 
-In December 2025, the international computer heritage community achieved a sensation: a long-lost magnetic tape from the **University of Utah**, dating back to 1974, was successfully read and reconstructed. This find represents the **Fourth Edition of UNIX (V4)**—a pivotal moment in the history of computing. 
+In December 2025, the international computer heritage community achieved a major breakthrough: a long-lost magnetic tape from the **University of Utah** (~1974) was successfully read and reconstructed. This find represents the **Fourth Edition of UNIX (V4)**—a pivotal moment in the history of computing. 
 
-UNIX V4 marks the historic turning point where the operating system was almost entirely rewritten in the **C programming language**. This transition birthed the era of portable software and laid the foundation for the modern digital world as we know it today.
+UNIX V4 marks the historic turning point where the operating system was almost entirely rewritten in the **C programming language**. This transition ushered in the era of portable software and laid the foundation for the modern digital world as we know it today.
 
 This repository serves as a practical bridge to this discovery. It documents the path from the raw data to a running system, allowing you to set up a functional UNIX V4 in just a few steps. It is a unique opportunity to explore the very first C-based UNIX and study the origins of modern systems architecture.
 
@@ -39,7 +39,7 @@ The **SIMH (History Simulator)** is the industry standard for emulating historic
     sudo apt update
     sudo apt install simh
     ```
-* **Linux (openSuse):** (I'm using)
+* **Linux (openSUSE):** (tested)
     ```bash
     sudo zypper install simh
     ```
@@ -117,7 +117,7 @@ Once the simulator starts, it will read the bootloader from the tape. When the h
 =
 ```
 
-## Step 3. The Installation Process (mcopy)
+## Step 3: The Installation Process (mcopy)
 After launching the simulator with `simh-pdp11 boot.ini`, you will see the `=` prompt. This is the standalone bootloader from the tape. Since our `disk.rk` is empty, we must copy the system from the tape to the disk.
 
 Type the following commands (press Enter after each line):
@@ -235,7 +235,6 @@ Before we start, we should clean up any old object files or previous build remai
     # rm -f *.o
     # rm -f lib1 lib2
     ```
-
 
 ### 3. Building the Core Library (`lib1`)
 First, we move into the 'ken' directory to compile the base of our operating system.
