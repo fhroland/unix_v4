@@ -171,8 +171,178 @@ root
 
 _(Note: At this stage, there is typically no password set for the root account.)_
 
+## Step 5: Interacting with UNIX V4 :-)
+
+Once you see the `#` prompt, you are logged in as `root`. However, the shell (the original Thompson Shell) behaves very differently from modern terminals like 'bash' or 'zsh'.
+
+### ⚠️ Important: How to correct typing errors
+In 1973, there was no "Backspace" key in the modern sense. If you make a mistake while typing a command, the system uses "Line Kill" and "Character Erase" symbols typical for that era:
+
+* **The `#` Key (Erase):** If you type a wrong character, type a `#` immediately after it. The system will treat the character before the `#` as deleted. 
+    * *Example:* `lss#` will be interpreted by the system as `ls`.
+* **The `@` Key (Kill):** If you have messed up the entire line, type an `@` at the end and press Enter. This tells the system to discard the entire line so you can start over fresh.
+
+### Basic Commands to Try
+Since there is no tab-completion or command history, you have to type every command precisely:
+
+* **`ls /bin`**: Lists the essential system binaries.
+* **`who`**: Shows who is logged in (it should just show `root`).
+* **`date`**: Displays the current system time.
+* **`cat /etc/passwd`**: View the system's user file.
+
+### Navigating the Filesystem
+One of the most notable differences for modern users is that the command `cd` (Change Directory) does not exist yet. In **UNIX V4**, you must use the full command name:
+
+* **`chdir`**: This is the command to change your working directory.
+    ```text
+    # chdir /bin
+    # chdir /
+    ```
+* **No `cd` shorthand**: Typing `cd` will result in a "not found" error.
+* **No home directory**: Typing `chdir` without an argument will not take you "home" (as there is no `$HOME` variable defined yet); you must always specify the target path.
+
+## Step 6: Compiling a New Kernel
+
+In UNIX V4, there was no `make` utility. System libraries and the kernel were built by manually running compiler commands or shell scripts. 
+
+### 1. Understanding the Source Structure
+Navigate to the system source directory:
+```text
+# chdir /usr/sys
+# ls -l
+```
+You will see some *C-include files* (*.h), two libraries ('lib1' and 'lib2') and three main directories:
+* **conf:** Contains the configuration files and the assembly language startup code.
+* **ken:** Contains the "Kernel" core (Memory management, scheduling, etc.), named after **Ken Thompson**.
+* **dmr:** Contains the device drivers and I/O logic, named after **Dennis Ritchie**.
+
+Since this version is famous for being the first one written in **C**, you should take a look at the system sources in these folders. :-)
+
+### 2. Preparing the Workspace
+Before we start, we should clean up any old object files or previous build remains to save precious disk space on our 2.5MB drive:
+
+    ```plaintext
+    # rm -f *.o
+    # rm -f lib1 lib2
+    ```
 
 
+### 3. Building the Core Library (`lib1`)
+First, we move into the 'ken' directory to compile the base of our operating system.
+
+1. **Change Directory:**
+    ```plaintext
+    # chdir ken
+    ```
+
+2. **Create the Library Build Script:** Since we don't have make, we create a shell script named `mklib.sh` using the `ed` editor. This script will compile each `.c` file and replace it in our library archive.
+   Create the build script using ed: Since there is no make, we manually create a shell script. Start the editor:
+    ```plaintext
+    # ed mklib.sh
+    ```
+
+   Now, enter the following commands exactly. Type `a` to start appending text, then paste/type the `ar` commands, and finish with a dot `.` on a new line:
+
+   ```plaintext
+    a
+    ar r ../lib1 main.o
+    ar r ../lib1 alloc.o
+    ar r ../lib1 iget.o
+    ar r ../lib1 prf.o
+    ar r ../lib1 rdwri.o
+    ar r ../lib1 slp.o
+    ar r ../lib1 subr.o
+    ar r ../lib1 text.o
+    ar r ../lib1 trap.o
+    ar r ../lib1 sig.o
+    ar r ../lib1 sysent.o
+    ar r ../lib1 sys1.o
+    ar r ../lib1 sys2.o
+    ar r ../lib1 sys3.o
+    ar r ../lib1 sys4.o
+    ar r ../lib1 nami.o
+    ar r ../lib1 fio.o
+    ar r ../lib1 clock.o
+    .
+    w
+    q
+    ```
+    
+    _Note: After typing `w`, `ed` will display the number of bytes written to the file._
+
+4. **Compile the kernel sources:** Before running the script, we must compile the C files into object files (`.o`):
+    ```plaintext
+    # cc -c *.c
+    ```
+
+5. **Run the archive script:** Now, execute the script to bundle the object files into `lib1`:
+    ```plaintext
+    # sh mklib.sh
+    ```
+   
+### 💡 A Note on Script Execution
+You might notice that we executed the script using `sh mklib.sh` instead of making the file executable. In UNIX V4, the "executable bit" for scripts was not yet a standard convention as it is today. By passing the file as an argument to `sh` (the Thompson Shell), we are explicitly telling the shell to read and execute the commands inside the file, regardless of its permissions.
+
+5. **Cleanup:** Storage is extremely limited on an **RK05** disk. Delete the object files immediately after they are added to the library:
+    ```plaintext
+    # rm -f *.o
+    ```
+
+### 4. Building the Driver Library (`lib2`)
+Now we repeat the process for the device drivers located in the `dmr` directory. These files handle the communication with the hardware, such as the disk drives and the console.
+
+1. **Navigate to the directory:**
+    ```text
+    # chdir ../dmr
+    ```
+   
+2. **Compile the driver sources:**
+    ```plaintext
+    # cc -c *.c
+    ```
+   
+3. **Archive into `lib2`:** We can follow the same steps described above,...
+    ```plaintexst
+    ar r ../lib2 bio.o
+    ar r ../lib2 tty.o
+    ar r ../lib2 malloc.o
+    ar r ../lib2 pipe.o
+    ar r ../lib2 cat.o
+    ar r ../lib2 dc.o
+    ar r ../lib2 dn.o
+    ar r ../lib2 dc.o
+    ar r ../lib2 dn.o
+    ar r ../lib2 dp.o
+    ar r ../lib2 kl.o
+    ar r ../lib2 mem.o
+    ar r ../lib2 pc.o
+    ar r ../lib2 rf.o
+    ar r ../lib2 rk.o
+    ar r ../lib2 tc.o
+    ar r ../lib2 tm.o
+    ar r ../lib2 vs.o
+    ar r ../lib2 vt.o
+    ar r ../lib2 partab.o
+    ar r ../lib2 rp.o
+    ar r ../lib2 lp.o
+    ar r ../lib2 dhdm.o
+    ar r ../lib2 dh.o
+    ar r ../lib2 dhfdm.o
+    ```
+
+...or instead of a script, we can also run the archiver directly with a wildcard to save time, as we want to include all compiled drivers into the second library:
+    ```plaintext
+    # ar r ../lib2 *.o
+    ```
+
+4. **Cleanup:** Again, remove the object files to keep the disk from filling up:
+    ```plaintext
+    # rm -f *.o
+    ```
+
+   
+---
+---
 
 > **Note:** If you find these scripts or instructions helpful, please cite this repository: [github.com/fhroland/unix_v4](https://github.com/fhroland/unix_v4)
 
