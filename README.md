@@ -1,6 +1,8 @@
 # UNIX V4 “Utah Tape” (1974) — Install & Run via SIMH (Recovered Dec 2025)
  (UNIX Fourth Edition - Reconstruction & Installation)
 
+**Keywords:** UNIX V4, Utah tape, University of Utah, 1974, recovered tape, SIMH, PDP-11 emulator
+
 This repository provides a step-by-step guide and **ready-to-use SIMH configuration files** to install and run the recently recovered “Utah” UNIX V4 tape (December 2025).
 
 ### A Milestone in Computer Archaeology
