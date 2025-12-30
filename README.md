@@ -15,10 +15,10 @@ This repository serves as a practical bridge to this discovery. It documents the
 Before you can boot UNIX V4, you need the PDP-11 emulator and the reconstructed tape image.
 
 ### 1. Download the Reconstruction Tape
-The "Utah" tape contains the original 1973/74 data. Download the digital tape image (`.tap` format) from the official Archive.org repository.
+The "Utah" tape contains the original 1973/74 data. Download the digital tape image (`.tap` format) from the official [Archive.org repository](https://archive.org/details/utah_unix_v4_raw).
 
 #### 💡 Pro Tip: Verify the File Type
-If you are on Linux or macOS, you can verify that the downloaded file is indeed a valid emulator tape image. Open your terminal and run:
+If you are on **Linux** or **macOS**, you can verify that the downloaded file is indeed a valid emulator tape image. Open your terminal and run:
 
 ```bash
 file analog.tap
@@ -39,7 +39,7 @@ The **SIMH (History Simulator)** is the industry standard for emulating historic
     sudo apt update
     sudo apt install simh
     ```
-* **Linux (openSuse):** (I have used)
+* **Linux (openSuse):** (I'm using)
     ```bash
     sudo zypper install simh
     ```
@@ -48,9 +48,19 @@ The **SIMH (History Simulator)** is the industry standard for emulating historic
     brew install simh
     ```
 * **Windows:**
-    Download the latest binaries from the [SIMH GitHub Releases](https://github.com/simh/simh) or use [Open SIMH](https://github.com/open-simh/simh). Ensure `pdp11.exe` is in your PATH or project folder.
 
+  Running UNIX V4 on Windows can be done in two ways:
 
+    1.  **WSL (Highly Recommended):** This is the fastest and most stable method. Install a Linux distribution via WSL and follow the Linux instructions.
+        ```bash
+        # Inside WSL (e.g., Ubuntu)
+        sudo apt update && sudo apt install simh
+        ```
+    2.  **Native Windows Binaries:** If you prefer running it natively, you can find the latest pre-compiled binaries here:
+        * [SIMH Development Binaries](https://github.com/simh/Development-Binaries)
+        * or follow instructions on [Open SIMH GitHub](https://github.com/open-simh/simh)
+
+    *Note: Ensure that the executable is named `simh-pdp11` or `pdp11` depending on the version you download.*
 
 ## Step 2: Defining the Virtual Hardware
 
