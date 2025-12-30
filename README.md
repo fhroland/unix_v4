@@ -1,4 +1,5 @@
-# UNIX Fourth Edition (1973) - Reconstruction & Installation
+# UNIX V4 “Utah Tape” (1974) — Install & Run via SIMH (Recovered Dec 2025)
+ (UNIX Fourth Edition - Reconstruction & Installation)
 
 This repository provides a step-by-step guide and **ready-to-use SIMH configuration files** to install and run the recently recovered “Utah” UNIX V4 tape (December 2025).
 
