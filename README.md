@@ -301,8 +301,8 @@ Now we repeat the process for the device drivers located in the `dmr` directory.
     # cc -c *.c
     ```
    
-3. **Archive into `lib2`:** We can follow the same steps described above,...
-    ```plaintexst
+3. **Archive into `lib2`:** We can follow the same steps described above to create a shell script 'mklib.sh' for the following files:
+    ```plaintext
     ar r ../lib2 bio.o
     ar r ../lib2 tty.o
     ar r ../lib2 malloc.o
@@ -330,7 +330,8 @@ Now we repeat the process for the device drivers located in the `dmr` directory.
     ar r ../lib2 dhfdm.o
     ```
 
-...or instead of a script, we can also run the archiver directly with a wildcard to save time, as we want to include all compiled drivers into the second library:
+    or instead of using a script to insert selected drivers into the library, we can also run the archiver directly with a wildcard to save time, as we want to include all compiled drivers into the second library `lib2`:
+    
     ```plaintext
     # ar r ../lib2 *.o
     ```
@@ -340,6 +341,53 @@ Now we repeat the process for the device drivers located in the `dmr` directory.
     # rm -f *.o
     ```
 
+### 5. Final Assembly and Configuration (`conf`)
+The `conf` directory contains the "glue" that connects the kernel to the hardware. Here we find the assembly startup code and the configuration table.
+
+1. **Navigate to the directory:**
+   ```text
+   # chdir ../conf
+   ```
+2. **Assemble the Low-Level Code:** We use the assembler (`as`) to process the trap vectors and the machine-language startup code. Note that the output of the assembler is always named `a.out` by default, so we must rename it immediately:
+    ```plaintext
+    # as low.s
+    # mv a.out low.o
+    # as mch.s
+    # mv a.out mch.o
+    ```
+3. **Compile the Configuration Table:** The file `conf.c` defines which device drivers from `lib2` are actually included in the kernel.
+    ```plaintext
+    # cc -c conf.c
+    ```
+    
+6. **Linking the New Kernel:**
+    Now we have all the pieces ready: `low.o`, `mch.o`, `conf.o`, and our two libraries `lib1` and `lib2`. We use the linker (`ld`) to combine them into one executable file.
+
+7. **The Final Link:**
+    ```plaintext
+    # ld -a low.o mch.o conf.o ../lib1 ../lib2
+    ```
+    
+    Note: The `-a` flag tells the linker to create an absolute executable. The resulting file is named `a.out`.
+
+8. **Install the Kernel:** Copy the finished kernel to the root directory and give it a name:
+    ```plaintext
+    # cp a.out /unixv4
+    ```
+    
+9. **Safe Shutdown:** Before testing your new kernel, ensure all data is written to the disk image:
+    ```plaintext
+    # sync
+    # sync
+    # sync
+    ```
+## Step 7: Testing Your New Kernel
+To boot your freshly compiled kernel, restart the simulator. When the '@' prompt appears, instead of typing 'unix', type your new filename:
+    ```plaintext
+    @unixv4
+    ```
+If you see the `mem = ...` message and the `login` prompt, you have successfully compiled UNIX Fourth Edition from source! 
+It's June 1973 and you are working with the first C-based operating system - UNIX V4. :-) 
    
 ---
 ---
