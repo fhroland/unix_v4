@@ -4,6 +4,8 @@
 
 **Schlagwörter:** UNIX V4, Utah tape, University of Utah, 1974, recovered tape, SIMH, PDP-11 emulator
 
+> 🇬🇧 Englische Version dieser Anleitung / English version of this guide: [README.md](README.md)
+
 Dieses Repository bietet eine Schritt-für-Schritt-Anleitung sowie sofort nutzbare SIMH‑Konfigurationsdateien, um das kürzlich wiederhergestellte „Utah“ UNIX‑V4‑Band (Dezember 2025) zu installieren und auszuführen.
 
 ## Ein Meilenstein der Computerarchäologie
