@@ -189,7 +189,7 @@ _(Note: At this stage, there is typically no password set for the root account.)
 Once you see the `#` prompt, you are logged in as `root`. However, the shell (the original Thompson Shell) behaves very differently from modern terminals like 'bash' or 'zsh'.
 
 ### ⚠️ Important: How to correct typing errors
-In 1973, there was no "Backspace" key in the modern sense. If you make a mistake while typing a command, the system uses "Line Kill" and "Character Erase" symbols typical for that era:
+In the early 1970's, there was no "Backspace" key in the modern sense. If you make a mistake while typing a command, the system uses "Line Kill" and "Character Erase" symbols typical for that era:
 
 * **The `#` Key (Erase):** If you type a wrong character, type a `#` immediately after it. The system will treat the character before the `#` as deleted. 
     * *Example:* `lss#` will be interpreted by the system as `ls`.
