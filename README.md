@@ -77,7 +77,7 @@ Run the following command in your terminal to create an empty disk file:
 # This creates a zeroed-out file named disk.rk
 dd if=/dev/zero of=disk.rk bs=512 count=4872
 ```
-alternatively you could also use the `truncate` command to create a "sparse file":
+Alternatively, you could also use the `truncate` command to create a "sparse file":
 
 ```bash
 truncate -s 2500k disk.rk
