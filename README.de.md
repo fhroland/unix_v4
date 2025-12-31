@@ -256,72 +256,72 @@ Vor dem Start räumen wir alte Object‑Files und Build‑Reste auf, um Platz au
 Zuerst wechseln wir in das Verzeichnis `ken`, um die Basis des Betriebssystems zu kompilieren.
 
 1. Verzeichnis wechseln:
-
+    ```text
       # chdir ken
-
+    ```
 2. Build‑Script erstellen: Da es kein `make` gibt, erstellen wir ein Shell‑Skript `mklib.sh` mit dem Editor `ed`. Dieses Skript fügt die Objektdateien nacheinander in das Library‑Archiv ein.
-
+   
    Starte `ed`:
-
+    ```text
       # ed mklib.sh
-
+    ```
    Gib anschließend die folgenden Befehle exakt ein. Tippe `a`, um Text anzuhängen, dann die `ar`‑Zeilen, und beende mit einem Punkt `.` in einer neuen Zeile:
-
+    ```text
        a
-   ar r ../lib1 main.o
-   ar r ../lib1 alloc.o
-   ar r ../lib1 iget.o
-   ar r ../lib1 prf.o
-   ar r ../lib1 rdwri.o
-   ar r ../lib1 slp.o
-   ar r ../lib1 subr.o
-   ar r ../lib1 text.o
-   ar r ../lib1 trap.o
-   ar r ../lib1 sig.o
-   ar r ../lib1 sysent.o
-   ar r ../lib1 sys1.o
-   ar r ../lib1 sys2.o
-   ar r ../lib1 sys3.o
-   ar r ../lib1 sys4.o
-   ar r ../lib1 nami.o
-   ar r ../lib1 fio.o
-   ar r ../lib1 clock.o
-   .
-   w
-   q
-
+       ar r ../lib1 main.o
+       ar r ../lib1 alloc.o
+       ar r ../lib1 iget.o
+       ar r ../lib1 prf.o
+       ar r ../lib1 rdwri.o
+       ar r ../lib1 slp.o
+       ar r ../lib1 subr.o
+       ar r ../lib1 text.o
+       ar r ../lib1 trap.o
+       ar r ../lib1 sig.o
+       ar r ../lib1 sysent.o
+       ar r ../lib1 sys1.o
+       ar r ../lib1 sys2.o
+       ar r ../lib1 sys3.o
+       ar r ../lib1 sys4.o
+       ar r ../lib1 nami.o
+       ar r ../lib1 fio.o
+       ar r ../lib1 clock.o
+       .
+       w
+       q
+    ```
    Hinweis: Nach `w` zeigt `ed` die Anzahl der geschriebenen Bytes an.
 
 3. Kernel‑Sources kompilieren:
-
+    ```blanktext
       # cc -c *.c
-
+    ```
 4. Archiv‑Skript ausführen:
-
+    ```blanktext
       # sh mklib.sh
-
+    ```
 #### Hinweis zur Skript‑Ausführung
 
 Du wirst sehen, dass das Skript mit `sh mklib.sh` ausgeführt wird, statt die Datei ausführbar zu machen. In UNIX V4 war das „executable bit“ für Skripte noch keine übliche Konvention. Indem wir die Datei als Argument an `sh` übergeben, sagen wir der Thompson Shell explizit, die enthaltenen Befehle auszuführen – unabhängig von den Dateirechten.
 
 5. Cleanup: Lösche die Objektdateien sofort, nachdem sie in die Library aufgenommen wurden:
-
+    ```text
       # rm -f *.o
-
+    ```
 ### 4. Treiber‑Library bauen (`lib2`)
 
 Jetzt wiederholen wir den Prozess im Verzeichnis `dmr`. Diese Dateien kümmern sich um die Kommunikation mit Hardware (Disk‑Drives, Konsole, …).
 
 1. Verzeichnis wechseln:
-
+    ```blanktext
       # chdir ../dmr
-
+    ```
 2. Treiber kompilieren:
-
+    ```blanktext
       # cc -c *.c
-
+    ```
 3. In `lib2` archivieren: Du kannst wie oben ein Skript `mklib.sh` erstellen, das z. B. folgende Dateien einfügt:
-
+    ```blanktext
       ar r ../lib2 bio.o
       ar r ../lib2 tty.o
       ar r ../lib2 malloc.o
@@ -345,62 +345,62 @@ Jetzt wiederholen wir den Prozess im Verzeichnis `dmr`. Diese Dateien kümmern s
       ar r ../lib2 dhdm.o
       ar r ../lib2 dh.o
       ar r ../lib2 dhfdm.o
-
+    ```
    Oder (schneller): Wenn du *alle* kompilierten Treiber aufnehmen willst, kannst du den Archiver direkt mit Wildcard verwenden:
-
+    ```blanktext
       # ar r ../lib2 *.o
-
+    ```
 4. Cleanup:
-
+    ```blanktext
       # rm -f *.o
-
+    ```
 ### 5. Finale Assembly & Konfiguration (`conf`)
 
 Das Verzeichnis `conf` enthält den „Kleber“, der Kernel und Hardware verbindet – hier liegen Startup‑Code (Assembler) und die Konfigurationstabelle.
 
 1. Verzeichnis wechseln:
-
+    ```blanktext
       # chdir ../conf
-
+    ```
 2. Low‑Level‑Code assemblieren: Wir verwenden `as` für Trap‑Vectors und Startup‑Code. Da die Ausgabe standardmäßig `a.out` heißt, müssen wir sie sofort umbenennen:
-
+    ```blanktext
       # as low.s
       # mv a.out low.o
       # as mch.s
       # mv a.out mch.o
-
+    ```
 3. Konfigurationstabelle kompilieren: `conf.c` definiert, welche Treiber aus `lib2` tatsächlich in den Kernel gelinkt werden:
-
+    ```blanktext
       # cc -c conf.c
-
+    ```
 4. Den neuen Kernel linken: Jetzt haben wir `low.o`, `mch.o`, `conf.o` sowie `lib1` und `lib2`. Mit `ld` kombinieren wir alles zu einem ausführbaren File.
 
 5. Finaler Link:
-
+    ```text
       # ld -a low.o mch.o conf.o ../lib1 ../lib2
-
+    ```
    Hinweis: `-a` erzeugt ein absolutes Executable. Die resultierende Datei heißt `a.out`.
 
 6. Kernel installieren: Kopiere den Kernel ins Root‑Verzeichnis und gib ihm einen Namen:
-
+    ```text
       # cp a.out /unixv4
-
+    ```
 7. Sicher herunterfahren: Vor dem Testen sicherstellen, dass alle Daten auf das Disk‑Image geschrieben wurden:
-
+    ```text
       # sync
       # sync
       # sync
-
+    ```
 ---
 
 ## Schritt 7: Neuen Kernel testen
 
 Um deinen frisch kompilierten Kernel zu booten, starte den Simulator neu. Wenn der Prompt erscheint, gib statt `unix` deinen neuen Dateinamen ein:
-
+```text
     k
     unixv4
-
-Wenn du `mem = ...` und den `login`‑Prompt siehst, hast du UNIX Fourth Edition erfolgreich aus dem Quellcode kompiliert! Es ist Juni 1974, und du arbeitest mit dem ersten C‑basierten Betriebssystem: **UNIX V4**. :-)
+```
+Wenn du `mem = ...` und den `login`‑Prompt siehst, hast du UNIX Fourth Edition erfolgreich aus dem Quellcode kompiliert! Es ist Juni 1974 und du arbeitest mit dem ersten C‑basierten Betriebssystem: **UNIX V4**. :-)
 
 * * *
 
