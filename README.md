@@ -13,6 +13,8 @@ UNIX V4 marks the historic turning point where the operating system was almost e
 
 This repository serves as a practical bridge to this discovery. It documents the path from the raw data to a running system, allowing you to set up a functional UNIX V4 in just a few steps. It is a unique opportunity to explore the very first C-based UNIX and study the origins of modern systems architecture.
 
+---
+
 ## Step 1: Prerequisites & Downloads
 
 Before you can boot UNIX V4, you need the PDP-11 emulator and the reconstructed tape image.
@@ -28,7 +30,7 @@ file analog.tap
 ```
 **Expected Output:**
 
-```Plaintext
+```plaintext
 analog.tap: SIMH tape data
 ```
 
@@ -65,6 +67,8 @@ The **SIMH (History Simulator)** is the industry standard for emulating historic
 
     *Note: Ensure that the executable is named `simh-pdp11` or `pdp11` depending on the version you download.*
 
+--- 
+
 ## Step 2: Defining the Virtual Hardware
 
 To run UNIX V4, we must recreate a specific PDP-11 configuration that matches the requirements of the 1970s kernel. We will use a configuration file (often called `boot.ini` or `pdp11.ini`) to "wire" our virtual computer.
@@ -96,15 +100,15 @@ set cpu 256K           ; Set memory to 256 KB
 ; --- System State ---
 d sr 1                 ; Set Switch Register to 1 (Enables Single-User Mode)
 ; --- Attaching Media ---
-attach rk0 disk.rk     ; Attach our blank disk image
-attach tm0 analog.tap  ; Attach the Utah Tape image
+att rk0 disk.rk     ; Attach our blank disk image
+att tm0 analog.tap  ; Attach the Utah Tape image
 ; --- Boot Procedure ---
 boot -o tm0            ; Boot from the tape drive
 ```
 
 **Why these settings?**
-  * **CPU 11/45:** UNIX V4 was developed and optimized for the 11/45's memory management unit (MMU).
-  * **256K:** While 256 KB sounds tiny today, it was a massive amount of "core memory" in 1973, allowing the kernel to run smoothly.
+  * **CPU 11/45:** UNIX V4 was developed and optimized for the PDP-11/45.
+  * **256K:** While 256 KB sounds tiny today, it was a massive amount of "core memory" in 1974, allowing the kernel to run smoothly.
   * **boot tm0:** This command tells the hardware to read the first 512 bytes of the tape into memory and execute them—this is our "Bootloader."
 
 ### 3. Launch the Simulator
@@ -120,7 +124,9 @@ Once the simulator starts, it will read the bootloader from the tape. When the h
 =
 ```
 
-## Step 3: The Installation Process (mcopy)
+---
+
+## Step 3: Unix V4 Installation Process (mcopy)
 After launching the simulator with `simh-pdp11 boot.ini`, you will see the `=` prompt. This is the standalone bootloader from the tape. Since our `disk.rk` is empty, we must copy the system from the tape to the disk.
 
 Type the following commands (press Enter after each line):
@@ -133,6 +139,8 @@ offset: 75    (The Unix V4 data on this specific tape starts at block 75)
 count: 4000   (We copy 4000 blocks to ensure the entire system is transferred)
 ```
 
+---
+
 ## Step 4: First Boot from Disk
 
 Now that the system files have been copied to `disk.rk`, we need to transition from the installation phase to the actual operating system boot.
@@ -140,7 +148,7 @@ Now that the system files have been copied to `disk.rk`, we need to transition f
 ### 1. Exit and Reconfigure
 First, shut down the current simulation session:
 * Press `Ctrl+E` to return to the SIMH prompt.
-* Type `quit` and press Enter.
+* Type `quit` and press `Enter`.
 
 ### 2. Update the `boot.ini`
 Open your `boot.ini` file and change the last line. We no longer want to boot the tape (`tm0`); we want to boot the primary disk (`rk0`). Your final `boot.ini` should look like this:
@@ -161,10 +169,8 @@ Start the simulator again:
 simh-pdp11 boot.ini
 ```
 
-After the simulator initializes (you might see a message like `Disabling XQ`), the bootloader waits for your input. Unlike modern systems, it requires manual interaction to find the kernel:
-
+After the simulator initializes (you might see a message like `Disabling XQ`), the PDP-11 bootloader waits for your input. Unlike modern systems, it requires manual interaction to find the kernel:
 * **Press** `k`: This tells the bootloader to look at the **RK05** disk drive.
-
 * **Type** `unix` **and press Enter**: This specifies the filename of the kernel to be loaded.
 
 You should then see the memory initialization message and the system will present the login prompt:
@@ -182,7 +188,9 @@ In UNIX V4, you can log in as the superuser by typing:
 root
 ```
 
-_(Note: At this stage, there is typically no password set for the root account.)_
+_Note: At this stage, there is typically no password set for the root account._
+
+---
 
 ## Step 5: Interacting with UNIX V4 :-)
 
@@ -214,6 +222,8 @@ One of the most notable differences for modern users is that the command `cd` (C
 * **No `cd` shorthand**: Typing `cd` will result in a "not found" error.
 * **No home directory**: Typing `chdir` without an argument will not take you "home" (as there is no `$HOME` variable defined yet); you must always specify the target path.
 
+--- 
+
 ## Step 6: Compiling a New Kernel
 
 In UNIX V4, there was no `make` utility. System libraries and the kernel were built by manually running compiler commands or shell scripts. 
@@ -226,10 +236,10 @@ Navigate to the system source directory:
 ```
 You will see some *C-include files* (*.h), two libraries ('lib1' and 'lib2') and three main directories:
 * **conf:** Contains the configuration files and the assembly language startup code.
-* **ken:** Contains the "Kernel" core (Memory management, scheduling, etc.), named after **Ken Thompson**.
-* **dmr:** Contains the device drivers and I/O logic, named after **Dennis Ritchie**.
+* **ken:** Contains the "Kernel" core (Memory management, scheduling, etc.), named after **[Ken Thompson](https://de.wikipedia.org/wiki/Ken_Thompson)**.
+* **dmr:** Contains the device drivers and I/O logic, named after **[Dennis Ritchie](https://de.wikipedia.org/wiki/Dennis_Ritchie)**.
 
-Since this version is famous for being the first one written in **C**, you should take a look at the system sources in these folders. :-)
+Since this version is famous for being **the first UNIX one written in C** , you should take a look at the system sources in these folders. :-)
 
 ### 2. Preparing the Workspace
 Before we start, we should clean up any old object files or previous build remains to save precious disk space on our 2.5MB drive:
@@ -301,7 +311,7 @@ You might notice that we executed the script using `sh mklib.sh` instead of maki
     ```
 
 ### 4. Building the Driver Library (`lib2`)
-Now we repeat the process for the device drivers located in the `dmr` directory. These files handle the communication with the hardware, such as the disk drives and the console.
+Now we repeat the process for the device drivers located in the `dmr` directory. These modules handle the communication with the hardware, such as the disk drives and the console.
 
 1. **Navigate to the directory:**
     ```text
@@ -372,27 +382,29 @@ The `conf` directory contains the "glue" that connects the kernel to the hardwar
     # cc -c conf.c
     ```
     
-6. **Linking the New Kernel:**
-    Now we have all the pieces ready: `low.o`, `mch.o`, `conf.o`, and our two libraries `lib1` and `lib2`. We use the linker (`ld`) to combine them into one executable file.
+4. **Linking the New Kernel:**
+    Now we have all the pieces ready: `low.o`, `mch.o`, `conf.o`, and our two libraries `lib1` and `lib2`. We use the linker (`ld`) to combine them into **one executable monolithic kernel**.
 
-7. **The Final Link:**
     ```plaintext
     # ld -a low.o mch.o conf.o ../lib1 ../lib2
     ```
     
     Note: The `-a` flag tells the linker to create an absolute executable. The resulting file is named `a.out`.
 
-8. **Install the Kernel:** Copy the finished kernel to the root directory and give it a name:
+5. **Install the Kernel:** Copy the finished kernel to the root directory and give it a name:
     ```plaintext
     # cp a.out /unixv4
     ```
     
-9. **Safe Shutdown:** Before testing your new kernel, ensure all data is written to the disk image:
+6. **Safe Shutdown:** Before testing your new kernel, ensure all data is written to the disk image:
     ```plaintext
     # sync
     # sync
     # sync
     ```
+
+---
+    
 ## Step 7: Testing Your New Kernel
 To boot your freshly compiled kernel, restart the simulator. When the prompt appears, instead of typing 'unix', type your new filename:
 ```plaintext
@@ -402,12 +414,11 @@ unixv4
 If you see the `mem = ...` message and the `login` prompt, you have successfully compiled UNIX Fourth Edition from source! 
 It's June 1974 and you are working with the first C-based operating system - UNIX V4. :-) 
    
----
----
+* * *
 
 > **Note:** If you find these scripts or instructions helpful, please cite this repository: [github.com/fhroland/unix_v4](https://github.com/fhroland/unix_v4)
 
 ## Credits & Sources
-* **Technical Guide:** Based on the excellent work at [squoze.net/UNIX/v4/](http://squoze.net/UNIX/v4/)
-* **Tape Image:** Recovered by Thalia Archibald et al. (Available at [Archive.org](https://archive.org/details/utah_unix_v4_raw))
-* **License:** This project is licensed under the BSD 3-Clause License. Original UNIX source code is subject to the Caldera License.
+* **Technical Guide:** Based on the excellent short introduction at [squoze.net/UNIX/v4/](http://squoze.net/UNIX/v4/)
+* **Tape Image:** Recovered by Thalia Archibald et al. (Available at [Archive.org](https://archive.org/details/utah_unix_v4_raw)
+* **License:** This project is licensed under the BSD 3-Clause License.
