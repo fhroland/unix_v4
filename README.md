@@ -7,7 +7,7 @@ This repository provides a step-by-step guide and **ready-to-use SIMH configurat
 
 ### A Milestone in Computer Archaeology
 
-In December 2025, the international computer heritage community achieved a major breakthrough: a long-lost magnetic tape from the **University of Utah** (~1974) was successfully read and reconstructed. This find represents the **Fourth Edition of UNIX (V4)**—a pivotal moment in the history of computing. 
+In December 2025, the international computer heritage community achieved a major breakthrough: a long-lost magnetic tape from the **University of Utah** (June 1974) was successfully read and reconstructed. This find represents the **Fourth Edition of UNIX (V4)** - a pivotal moment in the history of computing. 
 
 UNIX V4 marks the historic turning point where the operating system was almost entirely rewritten in the **C programming language**. This transition ushered in the era of portable software and laid the foundation for the modern digital world as we know it today.
 
@@ -394,12 +394,13 @@ The `conf` directory contains the "glue" that connects the kernel to the hardwar
     # sync
     ```
 ## Step 7: Testing Your New Kernel
-To boot your freshly compiled kernel, restart the simulator. When the '@' prompt appears, instead of typing 'unix', type your new filename:
-    ```plaintext
-    @unixv4
-    ```
+To boot your freshly compiled kernel, restart the simulator. When the prompt appears, instead of typing 'unix', type your new filename:
+```plaintext
+k
+unixv4
+```
 If you see the `mem = ...` message and the `login` prompt, you have successfully compiled UNIX Fourth Edition from source! 
-It's June 1973 and you are working with the first C-based operating system - UNIX V4. :-) 
+It's June 1974 and you are working with the first C-based operating system - UNIX V4. :-) 
    
 ---
 ---
